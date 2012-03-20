@@ -1,6 +1,6 @@
 class CommentsController < ApplicationController
-  before_filter :load_article
-  
+  before_filter :load_article, :except => destroy
+  before_filter :authenticate, :only => destroy
   def create
     @comment = @article.comments.new(params[:comment])
     if @comment.save
@@ -11,6 +11,7 @@ class CommentsController < ApplicationController
   end
   
   def destroy
+    @article = currnt_user.article.find(params[:article_id])
     @comment = @article.comments.find(params[:id])
     @comment.destroy
     redirect_to @article, :notice => 'Comment deleted'
